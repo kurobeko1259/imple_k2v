@@ -5,7 +5,7 @@ document = []
 
 label = []
 
-with open("arxiv.txt", "r") as f:
+with open("./data/arxiv.txt", "r") as f:
     line = f.readline()
     while line:
         vocab = []
@@ -25,7 +25,7 @@ with open("arxiv.txt", "r") as f:
         document.append(copy.deepcopy(vocab))
         line = f.readline()
 
-with open("arxiv_lbl.txt", "r") as g:
+with open("./data/arxiv_lbl.txt", "r") as g:
     line = g.readline()
     while line:
         vocab = []
