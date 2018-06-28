@@ -32,6 +32,38 @@ def tok2bow(token_list, vocabulary):
 
     return data
 
+def calc_outedge(cooccurrence_matrix):
+    tmp = cooccurrence_matrix.T
+    outedge = [0 for x in range(tmp)]
+
+    i = 0
+    for x in tmp:
+        for y in x:
+            if y != 0:
+                outedge[i] += 1
+        i += 1
+
+    return outedge
+
+def calc_weight(sim, coo, outedge):
+    weight = sim * coo
+    weight = weight.T
+
+    i = 0
+    while i != len(weight):
+        weight[i] = weight[i]/outedge[i]
+        i += 1
+
+    weight = weight.T
+
+    return weight
+
+def calc_cossim(vec1, vec2):
+    vec1_norm = np.linalg.norm(vec1)
+    vec2_norm = np.linalg.norm(vec2)
+
+    return vec1.dot(vec2.T) / vec1_norm / vec2_norm
+
 def calc_pmi(cooccurrence_matrix, bow, length):
     pmi = np.zeros((len(bow), len(bow)))
     for i in range(len(bow)):
@@ -41,3 +73,12 @@ def calc_pmi(cooccurrence_matrix, bow, length):
                 pmi[i][j] = math.log2(x)
 
     return pmi
+
+def pagerank(W, M, d=0.85):
+    n = len(W)
+    P = np.matrix([1./n]*n).T
+    
+    for i in range(1000):
+        P = (1 - d) * W + d * M.dot(P)
+
+    return P
