@@ -1,5 +1,5 @@
 import spacy
-
+import re
 
 
 nlp =  spacy.load('en')
@@ -184,3 +184,24 @@ def preprocess(document):
 			last_cnt = token1[2]
 
 	return doc_preprocessed[:-1]
+
+def handmade_preprocess(token_list):
+	i = 0
+	while i != len(token_list):
+		if 0 < i < len(token_list) - 1:
+			if token_list[i] == '-':
+				token_list[i-1] = token_list[i-1] + token_list[i] + token_list[i+1]
+				del token_list[i:i+2]
+				i -= 1
+
+			if token_list[i][0] == '-' or token_list[i][0] == '\'':
+				token_list[i-1] = token_list[i-1] + token_list[i]
+				del token_list[i]
+
+			if token_list[i][-1] == '-' or token_list[i][-1] == '\'':
+				token_list[i] = token_list[i] + token_list[i+1]
+				del token_list[i+1]
+
+		i += 1
+
+	return token_list
