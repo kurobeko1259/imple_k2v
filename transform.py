@@ -48,9 +48,9 @@ with open("./data/arxiv_lbl.txt", "r") as g:
 doc = []
 
 i = 0
-for token in document:
+for token in label:
     i += 1
-    doc.extend(preprocess.preprocess(token[1]))
+    doc.extend(preprocess.preprocess(token[2]))
 
 i = 0
 while i != len(doc):
@@ -58,5 +58,5 @@ while i != len(doc):
     i += 1
 
 doc = ' '.join(doc)
-with open("corpus.txt", "a") as f:
+with open("corpus_lbl.txt", "a") as f:
     f.write(doc)

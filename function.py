@@ -10,7 +10,7 @@ def create_cooccurrence_matrix(token_list, window_size):
     for pos,token in enumerate(token_list):
         i = vocabulary.setdefault(token,len(vocabulary))
         start = max(0, pos - window_size)
-        end = min(len(token_list), pos+window_size)
+        end = min(len(token_list), pos+window_size+1)
         for pos2 in range(start, end):
             if pos2 == pos:
                 continue
@@ -34,7 +34,7 @@ def tok2bow(token_list, vocabulary):
 
 def calc_outedge(cooccurrence_matrix):
     tmp = cooccurrence_matrix.T
-    outedge = [0 for x in range(tmp)]
+    outedge = [0 for x in range(tmp.shape[0])]
 
     i = 0
     for x in tmp:
@@ -74,11 +74,35 @@ def calc_pmi(cooccurrence_matrix, bow, length):
 
     return pmi
 
+def calc_thesis_vec(word_vec_list):
+    thesis_vec = [0 for x in range(len(word_vec_list[0]))]
+
+    for vec in word_vec_list:
+        thesis_vec += vec
+
+    return thesis_vec
+
 def pagerank(W, M, d=0.85):
     n = len(W)
     P = np.matrix([1./n]*n).T
-    
-    for i in range(1000):
+    W = np.reshape(W, (n,1))
+    prev_P = P
+
+    while np.linalg.norm(P - prev_P) < 0.001:
+        prev_P = P
         P = (1 - d) * W + d * M.dot(P)
 
     return P
+
+def topn_ranking(dict, n):
+    sorted_dict = sorted(dict.items(), key=lambda x: -x[1])
+    i = 0
+    ranking = {}
+    for word, value in sorted_dict:
+        if i >= n:
+            break
+        else:
+            ranking.setdefault(word, value)
+            i += 1
+
+    return ranking
